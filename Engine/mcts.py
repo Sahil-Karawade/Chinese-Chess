@@ -105,7 +105,7 @@ class MCTS:
     def run(self, root_game):
         
         if root_game.is_game_over():
-            print("🚫 MCTS received a terminal game state — skipping search.")
+            print(" MCTS received a terminal game state — skipping search.")
             return None, None
 
         """Run MCTS from root position and return best action"""
@@ -135,7 +135,7 @@ class MCTS:
                 parent_node.N[move] = parent_node.N.get(move, 0) + 1
                 parent_node.W[move] = parent_node.W.get(move, 0) + value
                 parent_node.Q[move] = parent_node.W[move] / parent_node.N[move]
-                #print(f"📈 Backprop move {move}: old_Q={old_q:.3f}, new_Q={parent_node.Q[move]:.3f}, value={value:.3f}")
+                #print(f"Backprop move {move}: old_Q={old_q:.3f}, new_Q={parent_node.Q[move]:.3f}, value={value:.3f}")
                 value = -value  # Flip for opponent's perspective
         print("\n" + "="*50)
         print("🏁 FINAL MOVE SELECTION")
@@ -150,7 +150,7 @@ class MCTS:
         best_move = None
         best_child = None
         if debug:
-            print(f"\n🔍 MCTS Selection Debug (total visits: {total_visits})")
+            print(f"\nMCTS Selection Debug (total visits: {total_visits})")
 
         #Store all scores for comparisons
         move_scores = []
@@ -180,20 +180,20 @@ class MCTS:
                     
         if best_child is None and best_move is not None:
             if debug:
-                print(f"🚫 Move {best_move} has no child — removing and retrying")
+                print(f"Move {best_move} has no child — removing and retrying")
             del node.P[best_move]
             return self.select_child(node, debug)
 
         #if debug:
             #print("  Move breakdown:")
             #for data in sorted(move_scores, key=lambda x: x['total_score'], reverse=True):
-            #    mate_flag = "🏆" if data['is_mate'] else ""
-            #    capture_flag = "⚔️" if data['is_capture'] else ""
+            #    mate_flag = if data['is_mate'] else ""
+            #    capture_flag = if data['is_capture'] else ""
             #    print(f"{mate_flag}{capture_flag} Move {data['move']}: "
             #        f"Q={data['Q']:.3f}, U={data['U']:.3f}, P={data['P']:.3f}, "
             #        f"visits={data['visits']}, TOTAL={data['total_score']:.3f}")
         
-            #print(f"  🎯 Selected: {best_move} (score: {best_score:.3f})")
+            #print(f"Selected: {best_move} (score: {best_score:.3f})")
         
 
         return best_move, best_child
@@ -207,8 +207,8 @@ class MCTS:
             policy_logits, value = self.model(state_tensor)
             #policy = torch.softmax(policy_logits[0] / self.temperature, dim=0).cpu().numpy()
             logits = policy_logits[0].cpu().numpy()
-        #print(f"🧠 NN evaluation: {value.item():.3f} (positive = good for current player)")
-        #print(f"🧠 Current player: {node.game.get_current_player()}")
+        #print(f"NN evaluation: {value.item():.3f} (positive = good for current player)")
+        #print(f"Current player: {node.game.get_current_player()}")
         #Extra logits for legal moves only
         legal_logits = {a: logits[a] for a in legal_actions}
 
@@ -284,7 +284,7 @@ class MCTS:
             success = child_game.engine.make_move(*child_game.index_to_move(action), verbose=False)
 
             if not success or self.is_illegal_general_face(child_game):
-                #print(f"❌ Skipping illegal move: {action}")
+                #print(f"Skipping illegal move: {action}")
                 # Clean up P dictionary to avoid using it in selection
                 if action in node.P:
                     del node.P[action]
@@ -296,9 +296,9 @@ class MCTS:
         #print(f"Predicted value: {value.item()}")  # In evaluate() or expand()
 
         node.is_expanded = True
-        #print(f"🧠 Neural network evaluation: {value.item():.3f}")
+        #print(f"Neural network evaluation: {value.item():.3f}")
         scaled_value =  value.item()*5
-        #print(f"🧠 NN raw: {value.item():.3f}, scaled: {scaled_value:.3f}")
+        #print(f"NN raw: {value.item():.3f}, scaled: {scaled_value:.3f}")
         return scaled_value
 
     def get_terminal_value(self, game):
@@ -334,11 +334,11 @@ class MCTS:
     def select_action(self, root, debug = False):
         """Select the move with the highest visit count (greedy strategy)"""
         if not root.N:
-            print("⚠️ No available moves in root.N, picking random legal move.")
+            print("No available moves in root.N, picking random legal move.")
             legal = root.game.get_legal_actions()
             return np.random.choice(legal) if legal else None
         if debug:
-            print("\n📊 Final Visit Count Summary:")
+            print("\nFinal Visit Count Summary:")
             sorted_moves = sorted(root.N.items(), key=lambda x: x[1], reverse=True)
         
             for i, (move, visits) in enumerate(sorted_moves[:5]):
@@ -353,7 +353,7 @@ class MCTS:
         # Return the move (key) with the highest visit count (value)
         best_move= max(root.N.items(), key=lambda item: item[1])
         if debug:
-            print(f"🎯 Choosing move {best_move[0]} with visit count {best_move[1]}")
+            print(f"Choosing move {best_move[0]} with visit count {best_move[1]}")
         return best_move[0]
 
     def move_to_index(self, move):
@@ -386,15 +386,15 @@ class MCTS:
   #  xiangqi_game = XiangqiGame()  # This wraps the Game class
    # engine_board = xiangqi_game.engine.board
 
-    #print(f"✅ Type of xiangqi_game: {type(xiangqi_game)}")
-    #print(f"✅ Type of xiangqi_game.engine: {type(xiangqi_game.engine)}")
-    #print(f"✅ Type of xiangqi_game.engine.board: {type(engine_board)}")
+    #print(f"Type of xiangqi_game: {type(xiangqi_game)}")
+    #print(f"Type of xiangqi_game.engine: {type(xiangqi_game.engine)}")
+    #print(f"Type of xiangqi_game.engine.board: {type(engine_board)}")
     
     #piece = engine_board[0][0]
     #if piece:
-    #    print(f"📍 Piece at (0,0): {piece.name} ({piece.color})")
+    #    print(f"Piece at (0,0): {piece.name} ({piece.color})")
     #else:
-     #   print("📍 No piece at (0,0)")
+     #   print("No piece at (0,0)")
 
 #
 #print(f"Board type:{type(game.engine.board)}")
